@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
 
-    Email: {
+     email: {
       type: String,
       required: true,
       unique: true,
@@ -53,6 +53,9 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    resetPasswordToken: String,
+resetPasswordTokenExpireAt: Date,
+
   },
   { timestamps: true }
 );
