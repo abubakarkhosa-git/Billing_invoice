@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema(
     NTNCNIC: {
       type: Number,
       required: true,
-      unique: true,
+      // unique: true,
     },
 
     FBRToken: {
