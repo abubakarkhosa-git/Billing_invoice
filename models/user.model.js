@@ -5,11 +5,12 @@ const userSchema = new mongoose.Schema(
     NTNCNIC: {
       type: Number,
       required: true,
-      // unique: true,
+      unique: true,
     },
 
     FBRToken: {
       type: String,
+      required: true,
       default: null,
     },
 
@@ -20,15 +21,8 @@ const userSchema = new mongoose.Schema(
 
     Province: {
       type: String,
-      enum: [
-        "Punjab",
-        "Sindh",
-        "KPK",
-        "Balochistan",
-        "Gilgit Baltistan",
-        "Azad Kashmir",
-      ],
       required: true,
+    
     },
 
     Address: {

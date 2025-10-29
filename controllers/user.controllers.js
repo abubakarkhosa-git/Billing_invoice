@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import crypto from 'crypto'
 import jwt from "jsonwebtoken"
 import { sendPasswordResetEmail } from "../utils/nodemailer.js";
+import { getUserByConditions } from "../service/user.service.js";
 
 export const Signup = async (req, res) => {
   try {
@@ -79,37 +80,40 @@ export const Signup = async (req, res) => {
 
 
 
-
 export const login = async (req, res) => {
   try {
-    const {  email, username, password } = req.body;
+    const { email, username, password } = req.body;
 
-  
-    if ((!email && !username) || !password) {
+    // ✅ Validation
+    if (!email || !username || !password) {
       return res.status(400).json({
-        message: "Please provide Email or Username and Password",
+        message: "Please provide Email, Username, and Password",
       });
     }
 
-const user = await userModel.findOne({
-  $or: [{  email }, { username }]
-});
+    // ✅ Check both email and username together
+    const user = await getUserByConditions({ email, username });
 
     if (!user) {
-      return res.status(404).json({ message: "User does not exist, please signup first" });
+      return res.status(404).json({
+        message: "Invalid email or username — user not found",
+      });
     }
 
+    // ✅ Check password
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
       return res.status(401).json({ message: "Incorrect password" });
     }
 
+    // ✅ JWT token
     const token = jwt.sign(
       { id: user._id, username: user.username },
       process.env.SECRET_KEY,
       { expiresIn: "7d" }
     );
 
+    // ✅ Success
     return res.status(200).json({
       message: "Login successful",
       token,
@@ -119,10 +123,21 @@ const user = await userModel.findOne({
         email: user.email,
       },
     });
+
   } catch (error) {
-    return res.status(500).json({ message: "Server error", error });
+    console.error(error);
+    return res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
   }
 };
+
+
+
+
+
+
 
 
 
