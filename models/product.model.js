@@ -6,7 +6,6 @@ const productSchema = new mongoose.Schema(
       type: String,
       unique: true,
       required: [true, "HS Code is required"],
-      match: [/^\d{4}\.\d{4}$/, "HS Code must be in ####.#### format"],
     },
     description: {
       type: String,

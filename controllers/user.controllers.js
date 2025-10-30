@@ -4,21 +4,39 @@ import crypto from 'crypto'
 import jwt from "jsonwebtoken"
 import { sendPasswordResetEmail } from "../utils/nodemailer.js";
 import { getUserByConditions } from "../service/user.service.js";
+import { userValidation } from "../validations/user.validation.js";
+import { generateRefreshToken, generateToken } from "../utils/token.js";
+import { getFBRToken } from "../config/fbrToken.js";
+
+
 
 export const Signup = async (req, res) => {
   try {
+    // ✅ 1. FBR Token fetch from API
+    const fetchedFBRToken = await getFBRToken();
+    if (!fetchedFBRToken) {
+      return res.status(500).json({ message: "Failed to fetch FBR token" });
+    }
+
+    // ✅ 2. Validate input
+    const { error } = userValidation.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
+    }
+
+    // ✅ 3. Destructure input fields
     const {
       NTNCNIC,
-      FBRToken,
       BusinessName,
       Province,
       Address,
-       email,
+      email,
       username,
       password,
       newpassword,
     } = req.body;
 
+    // ✅ 4. Check required fields
     if (
       !NTNCNIC ||
       !BusinessName ||
@@ -32,35 +50,37 @@ export const Signup = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    // ✅ 5. Password match check
     if (password !== newpassword) {
       return res.status(400).json({ message: "Passwords do not match" });
     }
 
-    
+    // ✅ 6. Check user already exists
     const existingUser = await userModel.findOne({
-      $or: [{  email }, { username }],
+      $or: [{ email }, { username }],
     });
 
     if (existingUser) {
       return res.status(403).json({ message: "User already exists" });
     }
 
- 
+    // ✅ 7. Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-   
+    // ✅ 8. Create new user
     const user = await userModel.create({
       NTNCNIC,
-      FBRToken,
+      FBRToken: fetchedFBRToken, // ✅ save FBR token fetched from API
       BusinessName,
       Province,
       Address,
-       email,
+      email,
       username,
       password: hashedPassword,
     });
 
+    // ✅ 9. Send success response
     return res.status(201).json({
       message: "User registered successfully",
       user: {
@@ -71,12 +91,99 @@ export const Signup = async (req, res) => {
         Address: user.Address,
         email: user.email,
         username: user.username,
+        FBRToken: user.FBRToken, // show token if needed
       },
     });
+
   } catch (error) {
-    return res.status(500).json({ message: "Server error", error });
+    console.error("Signup Error:", error.message);
+    return res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
+
+// export const Signup = async (req, res) => {
+//   try {
+//       const FBRToken = await getFBRToken(); // ✅ call the FBR API here
+
+//     if (!FBRToken) {
+//       return res.status(500).json({ message: "Failed to fetch FBR token" });
+//     }
+//     const { error } = userValidation.validate(req.body);
+//     if (error) {
+//       return res.status(400).json({ message: error.details[0].message });
+//     }
+
+//     const {
+//       NTNCNIC,
+//       FBRToken,
+//       BusinessName,
+//       Province,
+//       Address,
+//        email,
+//       username,
+//       password,
+//       newpassword,
+//     } = req.body;
+
+//     if (
+//       !NTNCNIC ||
+//       !BusinessName ||
+//       !Province ||
+//       !Address ||
+//       !email ||
+//       !username ||
+//       !password ||
+//       !newpassword
+//     ) {
+//       return res.status(400).json({ message: "All fields are required" });
+//     }
+
+//     if (password !== newpassword) {
+//       return res.status(400).json({ message: "Passwords do not match" });
+//     }
+
+    
+//     const existingUser = await userModel.findOne({
+//       $or: [{  email }, { username }],
+//     });
+
+//     if (existingUser) {
+//       return res.status(403).json({ message: "User already exists" });
+//     }
+
+ 
+//     const salt = await bcrypt.genSalt(10);
+//     const hashedPassword = await bcrypt.hash(password, salt);
+
+   
+//     const user = await userModel.create({
+//       NTNCNIC,
+//       FBRToken,
+//       BusinessName,
+//       Province,
+//       Address,
+//        email,
+//       username,
+//       password: hashedPassword,
+//     });
+
+//     return res.status(201).json({
+//       message: "User registered successfully",
+//       user: {
+//         _id: user._id,
+//         NTNCNIC: user.NTNCNIC,
+//         BusinessName: user.BusinessName,
+//         Province: user.Province,
+//         Address: user.Address,
+//         email: user.email,
+//         username: user.username,
+//       },
+//     });
+//   } catch (error) {
+//     return res.status(500).json({ message: "Server error", error });
+//   }
+// };
 
 
 
@@ -91,7 +198,7 @@ export const login = async (req, res) => {
       });
     }
 
-    // ✅ Check both email and username together
+    // ✅ Find user by email & username
     const user = await getUserByConditions({ email, username });
 
     if (!user) {
@@ -100,23 +207,30 @@ export const login = async (req, res) => {
       });
     }
 
-    // ✅ Check password
+    // ✅ Verify password
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
       return res.status(401).json({ message: "Incorrect password" });
     }
 
-    // ✅ JWT token
-    const token = jwt.sign(
-      { id: user._id, username: user.username },
-      process.env.SECRET_KEY,
-      { expiresIn: "7d" }
-    );
+    // ✅ Generate JWT tokens (with payload)
+    const token = await generateToken({
+      id: user._id,
+      email: user.email,
+      username: user.username,
+    });
 
-    // ✅ Success
+    const refreshToken = await generateRefreshToken({
+      id: user._id,
+      email: user.email,
+    });
+    user.refreshToken = refreshToken;
+await user.save();
+    // ✅ Success response
     return res.status(200).json({
       message: "Login successful",
       token,
+      refreshToken,
       user: {
         id: user._id,
         username: user.username,
@@ -220,3 +334,30 @@ export const changepassword=async(req,res)=>{
   }
 };
  
+
+
+
+
+
+export const logout = async (req, res) => {
+  try {
+    const userId = req.user.id; 
+
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    
+    user.refreshToken = null;
+    await user.save();
+
+    
+    return res.status(200).json({
+      message: "Logout successful — please clear your tokens on client side",
+    });
+  } catch (error) {
+    console.error("Logout error:", error);
+    return res.status(500).json({ message: "Server error during logout" });
+  }
+};
