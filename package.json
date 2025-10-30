@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.js",
-     "build": "echo 'No build step required'"
+     "build": "echo 'No build step needed for Node.js backend'"
   },
   "author": "",
   "type": "module",
