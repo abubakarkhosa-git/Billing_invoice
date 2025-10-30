@@ -6,7 +6,7 @@ import { sendPasswordResetEmail } from "../utils/nodemailer.js";
 import { getUserByConditions } from "../service/user.service.js";
 import { userValidation } from "../validations/user.validation.js";
 import { generateRefreshToken, generateToken } from "../utils/token.js";
-import { getFBRToken } from "../config/fbrToken.js";
+// import { getFBRToken } from "../config/fbrToken.js";
 
 
 
@@ -104,7 +104,6 @@ import { getFBRToken } from "../config/fbrToken.js";
 
 export const Signup = async (req, res) => {
   try {
-      
     const { error } = userValidation.validate(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
@@ -116,7 +115,7 @@ export const Signup = async (req, res) => {
       BusinessName,
       Province,
       Address,
-       email,
+      email,
       username,
       password,
       newpassword,
@@ -124,6 +123,7 @@ export const Signup = async (req, res) => {
 
     if (
       !NTNCNIC ||
+      !FBRToken ||
       !BusinessName ||
       !Province ||
       !Address ||
@@ -139,27 +139,24 @@ export const Signup = async (req, res) => {
       return res.status(400).json({ message: "Passwords do not match" });
     }
 
-    
     const existingUser = await userModel.findOne({
-      $or: [{  email }, { username }],
+      $or: [{ email }, { username }],
     });
 
     if (existingUser) {
-      return res.status(403).json({ message: "User already exists" });
+      return res.status(409).json({ message: "User already exists" });
     }
 
- 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-   
     const user = await userModel.create({
       NTNCNIC,
       FBRToken,
       BusinessName,
       Province,
       Address,
-       email,
+      email,
       username,
       password: hashedPassword,
     });
@@ -169,6 +166,7 @@ export const Signup = async (req, res) => {
       user: {
         _id: user._id,
         NTNCNIC: user.NTNCNIC,
+        FBRToken: user.FBRToken,
         BusinessName: user.BusinessName,
         Province: user.Province,
         Address: user.Address,
@@ -177,9 +175,10 @@ export const Signup = async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json({ message: "Server error", error });
+    return res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+
 
 
 
