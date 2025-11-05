@@ -257,7 +257,7 @@ export const forgotpassword = async (req, res) => {
     const user = await userModel.findOne({ email });
 
     if (!user) {
-      return res.status(403).json({ message: "User not found" }); // ✅ added return
+      return res.status(403).json({ status: false, message: "User not found" }); // ✅ added return
     }
 
     const resetToken = crypto.randomBytes(20).toString("hex");
@@ -270,10 +270,10 @@ export const forgotpassword = async (req, res) => {
 
     await sendPasswordResetEmail(email, resetToken);
 
-    return res.status(201).json({success:true, message: "Password reset link sent to your email" }); // ✅ fixed
+    return res.status(201).json({status:true, message: "Password reset link sent to your email" }); // ✅ fixed
   } catch (error) {
     console.error(error);
-    return res.status(500).json({success:false, message: "Internal server error" }); // ✅ fixed
+    return res.status(500).json({status:false, message: "Internal server error" }); // ✅ fixed
   }
 };
 
@@ -298,10 +298,10 @@ export const resetpassword=async(req,res)=>{
     user.resetPasswordTokenExpireAt = undefined;
 
     await user.save();
-   return res.status(200).json({ success: true, message: "Password reset successful" });
+   return res.status(200).json({ status: true, message: "Password reset successful" });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: "Server error during password reset" });
+    return res.status(500).json({ status: false, message: "Server error during password reset" });
   }
 }
 
@@ -322,10 +322,10 @@ export const changepassword=async(req,res)=>{
     user.password = await bcrypt.hash(newpassword, 10);
     await user.save();
 
-    return res.status(200).json({ success: true, message: "Password changed successfully" });
+    return res.status(200).json({ status: true, message: "Password changed successfully" });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: "Server error while changing password" });
+    return res.status(500).json({ status: false, message: "Server error while changing password" });
   }
 };
  
