@@ -270,10 +270,10 @@ export const forgotpassword = async (req, res) => {
 
     await sendPasswordResetEmail(email, resetToken);
 
-    return res.status(201).json({ message: "Password reset link sent to your email" }); // ✅ fixed
+    return res.status(201).json({success:true, message: "Password reset link sent to your email" }); // ✅ fixed
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Internal server error" }); // ✅ fixed
+    return res.status(500).json({success:false, message: "Internal server error" }); // ✅ fixed
   }
 };
 
@@ -298,10 +298,10 @@ export const resetpassword=async(req,res)=>{
     user.resetPasswordTokenExpireAt = undefined;
 
     await user.save();
-   return res.status(200).json({ message: "Password reset successful" });
+   return res.status(200).json({ success: true, message: "Password reset successful" });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Server error during password reset" });
+    return res.status(500).json({ success: false, message: "Server error during password reset" });
   }
 }
 
@@ -322,10 +322,10 @@ export const changepassword=async(req,res)=>{
     user.password = await bcrypt.hash(newpassword, 10);
     await user.save();
 
-    return res.status(200).json({ message: "Password changed successfully" });
+    return res.status(200).json({ success: true, message: "Password changed successfully" });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Server error while changing password" });
+    return res.status(500).json({ success: false, message: "Server error while changing password" });
   }
 };
  
