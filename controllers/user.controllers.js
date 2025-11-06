@@ -4,7 +4,7 @@ import crypto from 'crypto'
 import jwt from "jsonwebtoken"
 import { sendPasswordResetEmail } from "../utils/nodemailer.js";
 import { getUserByConditions } from "../service/user.service.js";
-import { userValidation } from "../validations/user.validation.js";
+// import { userValidation } from "../validations/user.validation.js";
 import { generateRefreshToken, generateToken } from "../utils/token.js";
 
 
