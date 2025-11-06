@@ -10,10 +10,10 @@ import { generateRefreshToken, generateToken } from "../utils/token.js";
 
 export const Signup = async (req, res) => {
   try {
-    const { error } = userValidation.validate(req.body);
-    if (error) {
-      return res.status(400).json({ message: error.details[0].message });
-    }
+    // const { error } = userValidation.validate(req.body);
+    // if (error) {
+    //   return res.status(400).json({ message: error.details[0].message });
+    // }
 
     const {
       NTNCNIC,
