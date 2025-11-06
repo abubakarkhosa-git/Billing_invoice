@@ -91,15 +91,11 @@ export const Signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, username, password } = req.body;
-
-    // ✅ Validation
     if (!email || !username || !password) {
       return res.status(400).json({
         message: "Please provide Email, Username, and Password",
       });
     }
-
-    // ✅ Find user by email & username
     const user = await getUserByConditions({ email, username });
 
     if (!user) {
@@ -107,14 +103,10 @@ export const login = async (req, res) => {
         message: "Invalid email or username — user not found",
       });
     }
-
-    // ✅ Verify password
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) {
       return res.status(401).json({ message: "Incorrect password" });
     }
-
-    // ✅ Generate JWT tokens (with payload)
     const token = await generateToken({
       id: user._id,
       email: user.email,
@@ -130,8 +122,7 @@ export const login = async (req, res) => {
 
     });
     user.refreshToken = refreshToken;
-await user.save();
-    // ✅ Success response
+    await user.save();
     return res.status(200).json({
       message: "Login successful",
       token,
@@ -169,11 +160,11 @@ export const forgotpassword = async (req, res) => {
     const user = await userModel.findOne({ email });
 
     if (!user) {
-      return res.status(403).json({ status: false, message: "User not found" }); // ✅ added return
+      return res.status(403).json({ status: false, message: "User not found" }); 
     }
 
     const resetToken = crypto.randomBytes(20).toString("hex");
-    const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; // 1 hour
+    const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; 
 
     user.resetPasswordToken = resetToken;
     user.resetPasswordTokenExpireAt = resetTokenExpiresAt;
@@ -185,7 +176,7 @@ export const forgotpassword = async (req, res) => {
     return res.status(201).json({status:true, message: "Password reset link sent to your email" }); // ✅ fixed
   } catch (error) {
     console.error(error);
-    return res.status(500).json({status:false, message: "Internal server error" }); // ✅ fixed
+    return res.status(500).json({status:false, message: "Internal server error" });
   }
 };
 
