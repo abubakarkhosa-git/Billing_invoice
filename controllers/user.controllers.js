@@ -182,31 +182,42 @@ export const forgotpassword = async (req, res) => {
 
 
 
-export const resetpassword=async(req,res)=>{
+export const resetpassword = async (req, res) => {
   try {
-    const{token}= req.params;
-    const{newpassword}=req.body
+    const { token } = req.params;
+    const { newpassword } = req.body;
 
-    const user=await userModel.findOne({
+    // ✅ Find user where token matches and expiry is still valid
+    const user = await userModel.findOne({
       resetPasswordToken: token,
-      resetPasswordTokenExpireAt : Date.now() + 1 * 60 * 60 * 1000
-    })
-       if (!user) {
+      resetPasswordTokenExpireAt: { $gt: Date.now() }
+    });
+
+    if (!user) {
       return res.status(400).json({ message: "Invalid or expired reset token" });
     }
 
-    const hashedPassword=await bcrypt.hash(newpassword, 10)
-     user.password = hashedPassword;
+    // ✅ Hash new password
+    const hashedPassword = await bcrypt.hash(newpassword, 10);
+
+    user.password = hashedPassword;
     user.resetPasswordToken = undefined;
     user.resetPasswordTokenExpireAt = undefined;
 
     await user.save();
-   return res.status(200).json({ status: true, message: "Password reset successful" });
+
+    return res
+      .status(200)
+      .json({ status: true, message: "Password reset successful" });
+
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ status: false, message: "Server error during password reset" });
+    return res
+      .status(500)
+      .json({ status: false, message: "Server error during password reset" });
   }
-}
+};
+
 
 
 export const changepassword=async(req,res)=>{

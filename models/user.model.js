@@ -48,7 +48,8 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     resetPasswordToken: String,
-resetPasswordTokenExpireAt: Date,
+resetPasswordTokenExpireAt: {type: Date,
+    index: { expires: 3600 }},
 refreshToken: { type: String },
 role: {
     type: String,

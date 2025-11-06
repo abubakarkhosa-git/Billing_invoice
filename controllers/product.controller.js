@@ -29,14 +29,13 @@ export const addProduct = async (req, res) => {
 
 export const updateProduct = async (req, res) => {
   const { productId } = req.params;
-  const updates = req.body; // The data to update
+  const updates = req.body; 
 
   try {
-    // Find the product by ID and update it
     const updatedProduct = await productModel.findByIdAndUpdate(
       productId,
       updates,
-      { new: true, runValidators: true } // return the updated doc & validate data
+      { new: true, runValidators: true } 
     );
 
     if (!updatedProduct) {
