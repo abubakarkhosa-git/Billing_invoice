@@ -48,42 +48,42 @@ export const getInvoiceById = async (req, res) => {
   }
 };
 
-export const updateInvoice = async (req, res) => {
-  try {
-    const updated = await SalesInvoice.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
+// export const updateInvoice = async (req, res) => {
+//   try {
+//     const updated = await SalesInvoice.findByIdAndUpdate(
+//       req.params.id,
+//       req.body,
+//       { new: true, runValidators: true }
+//     );
 
-    if (!updated)
-      return res.status(404).json({ status: false, message: "Invoice not found" });
+//     if (!updated)
+//       return res.status(404).json({ status: false, message: "Invoice not found" });
 
-    return res.status(200).json({
-      status: true,
-      message: "Invoice updated successfully",
-      data: updated,
-    });
-  } catch (error) {
-    console.error("Update Error:", error);
-    return res.status(500).json({ status: false, message: "Server Error" });
-  }
-};
+//     return res.status(200).json({
+//       status: true,
+//       message: "Invoice updated successfully",
+//       data: updated,
+//     });
+//   } catch (error) {
+//     console.error("Update Error:", error);
+//     return res.status(500).json({ status: false, message: "Server Error" });
+//   }
+// };
 
 
-export const deleteInvoice = async (req, res) => {
-  try {
-    const deleted = await SalesInvoice.findByIdAndDelete(req.params.id);
+// export const deleteInvoice = async (req, res) => {
+//   try {
+//     const deleted = await SalesInvoice.findByIdAndDelete(req.params.id);
 
-    if (!deleted)
-      return res.status(404).json({ status: false, message: "Invoice not found" });
+//     if (!deleted)
+//       return res.status(404).json({ status: false, message: "Invoice not found" });
 
-    return res.status(200).json({
-      status: true,
-      message: "Invoice deleted successfully",
-    });
-  } catch (error) {
-    console.error("Delete Error:", error);
-    return res.status(500).json({ status: false, message: "Server Error" });
-  }
-};
+//     return res.status(200).json({
+//       status: true,
+//       message: "Invoice deleted successfully",
+//     });
+//   } catch (error) {
+//     console.error("Delete Error:", error);
+//     return res.status(500).json({ status: false, message: "Server Error" });
+//   }
+// };

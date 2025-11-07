@@ -2,7 +2,7 @@ import express from 'express'
 import { changepassword, forgotpassword, login, logout, resetpassword, Signup } from '../controllers/user.controllers.js';
 import { isAuthorized } from '../middleware/auth.middleware.js';
 import { addProduct, deleteProduct, getAllProducts, getProduct, updateProduct } from '../controllers/product.controller.js';
-import { createInvoice ,getAllInvoices,getInvoiceById, updateInvoice ,deleteInvoice} from '../controllers/saleinvoice.controller.js';
+import { createInvoice ,getAllInvoices,getInvoiceById,  } from '../controllers/saleinvoice.controller.js';
 import { addCustomer, deleteCustomer, getAllCustomers, getCustomerById, updateCustomer } from '../controllers/customer.controllers.js';
 
 const router=express.Router();
@@ -36,6 +36,6 @@ router.delete("/customer/:id",isAuthorized, deleteCustomer);
 router.post("/saleinvoice",isAuthorized, createInvoice);
 router.get("/saleinvoice",isAuthorized, getAllInvoices);
 router.get("/saleinvoice/:id",isAuthorized, getInvoiceById);
-router.put("/saleinvoice/:id", isAuthorized,updateInvoice);
-router.delete("/saleinvoice/:id",isAuthorized, deleteInvoice);
+// router.put("/saleinvoice/:id", isAuthorized,updateInvoice);
+// router.delete("/saleinvoice/:id",isAuthorized, deleteInvoice);
 export default router;

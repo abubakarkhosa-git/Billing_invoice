@@ -4,6 +4,16 @@ export const addProduct = async (req, res) => {
   try {
     const { hsCode, description, uom, taxType, qtyInHand } = req.body;
 
+    // ✅ First check if hsCode already exists
+    const existingProduct = await productModel.findOne({ hsCode });
+    if (existingProduct) {
+      return res.status(400).json({
+        success: false,
+        message: "HS Code already exists",
+      });
+    }
+
+    // ✅ If not exist → create new product
     const product = await productModel.create({
       hsCode,
       description,
@@ -12,19 +22,20 @@ export const addProduct = async (req, res) => {
       qtyInHand,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Product added successfully",
       data: product,
     });
 
   } catch (error) {
-    res.status(400).json({
+    return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
+
 
 
 export const updateProduct = async (req, res) => {
