@@ -1,4 +1,5 @@
 import SalesInvoice from "../models/saleInvoice.model.js";
+import User from "../models/user.model.js"
 
 
 export const createInvoice = async (req, res) => {
@@ -45,6 +46,25 @@ export const getInvoiceById = async (req, res) => {
   } catch (error) {
     console.error("Get By ID Error:", error);
     return res.status(500).json({ status: false, message: "Server Error" });
+  }
+};
+
+export const getSales = async (req, res) => {
+  try {
+    
+    const sales = await User.find().select("NTNCNIC BusinessName Address Province");
+
+    res.status(200).json({
+      status: true,
+      message: "All sales fetched successfully",
+      data: sales,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: "Error fetching sales",
+      error: error.message,
+    });
   }
 };
 
