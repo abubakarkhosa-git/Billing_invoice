@@ -5,6 +5,7 @@ const customerSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, "Customer name is required"],
+      unique: true
       // match: [/^[A-Za-z ]*$/, "Only alphabets and spaces allowed"],
       // maxLength: [30, "Maximum 30 characters allowed"],
       // trim: true,
@@ -13,7 +14,7 @@ const customerSchema = new mongoose.Schema(
     ntnCnic: {
       type: String,
       required: [true, "NTN or CNIC is required"],
-      // unique: true, // optional, depends on business logic
+      unique: true, // optional, depends on business logic
       // validate: {
       //   validator: function (value) {
       //     const ntnPattern = /^[0-9]{7}-[0-9]{1}$/;

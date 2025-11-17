@@ -5,13 +5,14 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon server.js",
-     "build": "echo 'No build step needed for Node.js backend'"
+    "build": "echo 'No build step needed for Node.js backend'"
   },
   "author": "",
   "type": "module",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",

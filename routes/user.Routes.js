@@ -1,5 +1,5 @@
 import express from 'express'
-import { changepassword, forgotpassword, login, logout, resetpassword, Signup } from '../controllers/user.controllers.js';
+import { changepassword, forgotpassword, login, logout, refreshTokenController, resetpassword, Signup } from '../controllers/user.controllers.js';
 import { isAuthorized } from '../middleware/auth.middleware.js';
 import { addProduct, deleteProduct, getAllProducts, getProduct, updateProduct } from '../controllers/product.controller.js';
 import { createInvoice ,getAllInvoices,getInvoiceById,  } from '../controllers/saleinvoice.controller.js';
@@ -13,6 +13,7 @@ router.post("/forgot-password", forgotpassword)
 router.post("/reset-password/:token", resetpassword)
 router.post("/change-password", isAuthorized,changepassword)
 router.post("/logout", isAuthorized, logout);
+router.post("/refresh", refreshTokenController)
 
 
 //Product

@@ -18,9 +18,14 @@ const productSchema = new mongoose.Schema(
       default: "Numbers",
     },
     taxType: {
-      type: String,
-      required: [true, "Tax Type is required"],
-      default: "Goods at Standard Rates (Default)",
+      descriptionType:{
+        type: String, 
+        required: true
+      },
+      salesTaxValue:{
+        type: String,
+        reuired: true
+      }
     },
     qtyInHand: {
       type: Number,
