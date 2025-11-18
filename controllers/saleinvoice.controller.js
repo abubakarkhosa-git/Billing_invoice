@@ -49,24 +49,36 @@ export const getInvoiceById = async (req, res) => {
   }
 };
 
-export const getSales = async (req, res) => {
+export const getSellerDetails = async (req, res) => {
   try {
-    
-    const sales = await User.find().select("NTNCNIC BusinessName Address Province");
+    // Logged-in user ka id middleware se milta hai
+    const userId = req.user.id;
+
+    const user = await User.findById(userId).select(
+      "NTNCNIC BusinessName Address Province"
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        status: false,
+        message: "User not found",
+      });
+    }
 
     res.status(200).json({
       status: true,
-      message: "All sales fetched successfully",
-      data: sales,
+      message: "Seller details fetched successfully",
+      data: user, // 👍 single object, array nahi!
     });
   } catch (error) {
     res.status(500).json({
       status: false,
-      message: "Error fetching sales",
+      message: "Error fetching seller details",
       error: error.message,
     });
   }
 };
+
 
 // export const updateInvoice = async (req, res) => {
 //   try {
