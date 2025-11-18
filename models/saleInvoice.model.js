@@ -49,7 +49,7 @@ const salesInvoiceSchema = new mongoose.Schema(
     buyerRegistrationType: { type: String, enum: ["Registered", "Unregistered"], required: true },
 
   
-    scenarioId: { type: String, default: "SN026" },
+    scenarioId: { type: String, default: "" },
     invoiceRefNo: { type: String, default: "" },
 
     items: [itemSchema],
