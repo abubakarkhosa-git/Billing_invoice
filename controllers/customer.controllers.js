@@ -11,7 +11,7 @@ export const addCustomer = async (req, res) => {
       !ntnCnic ||
       !address ||
       !contact ||
-      !product ||
+      // !product ||
       !province ||
       !customertype
     ) {

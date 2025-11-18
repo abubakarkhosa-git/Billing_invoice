@@ -39,14 +39,14 @@ const customerSchema = new mongoose.Schema(
     //   unique: true, // optional — if every contact should be unique
     },
 
-    product: {
-      type: String,
-      required: [true, "Product is required"],
-      // validate: {
-      //   validator: (v) => v && v !== "Select preferred product",
-      //   message: "Please select a valid product",
-      // },
-    },
+    // product: {
+    //   type: String,
+    //   required: [true, "Product is required"],
+    //   // validate: {
+    //   //   validator: (v) => v && v !== "Select preferred product",
+    //   //   message: "Please select a valid product",
+    //   // },
+    // },
 
     province: {
       type: String,
@@ -57,7 +57,7 @@ const customerSchema = new mongoose.Schema(
     customertype: {
       type: String,
       required: [true, "Customer type is required"],
-      enum: ["Registered", "Un-Registered"],
+      // enum: ["Registered", "Un-Registered"],
     },
   },
   { timestamps: true }
