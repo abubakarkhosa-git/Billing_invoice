@@ -1,5 +1,7 @@
 import SalesInvoice from "../models/saleInvoice.model.js";
 import User from "../models/user.model.js"
+import moment from "moment";
+
 
 
 export const createInvoice = async (req, res) => {
@@ -78,6 +80,96 @@ export const getSellerDetails = async (req, res) => {
     });
   }
 };
+
+
+
+export const getTodaySales = async (req, res) => {
+  try {
+    // Get today's date in (DD-MM-YYYY)
+    const today = moment().format("DD-MM-YYYY");
+
+    // Fetch today's invoices
+    const invoices = await SalesInvoice.find({
+      invoiceDate: today,
+    }).populate("userId", "name"); // To get created by name
+
+    if (!invoices.length) {
+      return res.status(200).json({
+        status: true,
+        message: "No sales found for today",
+        data: [],
+        totalAmount: 0,
+        totalTax: 0
+      });
+    }
+
+    // Calculate totals
+    let totalAmount = 0;
+    let totalTax = 0;
+
+    const list = invoices.map((inv) => {
+      let amount = inv.grandTotal || 0;
+
+      // Calculate tax by summing item taxes
+      let tax = inv.items.reduce(
+        (sum, item) => sum + (item.salesTaxApplicable || 0),
+        0
+      );
+
+      totalAmount += amount;
+      totalTax += tax;
+
+      return {
+        date: inv.invoiceDate,
+        invoiceNo: inv.invoiceRefNo || "N/A",
+        customer: inv.buyerBusinessName,
+        amount,
+        tax,
+        createdBy: inv.userId?.name || "Unknown",
+      };
+    });
+
+    return res.status(200).json({
+      status: true,
+      message: "Today's sales fetched successfully",
+      data: list,
+      totalAmount,
+      totalTax,
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: false,
+      message: "Server error while fetching today's sales"
+    });
+  }
+};
+
+// export const getTodaySales = async (req, res) => {
+// try {
+// const today = new Date();
+// today.setHours(0,0,0,0);
+// const tomorrow = new Date(today);
+// tomorrow.setDate(today.getDate()+1);
+
+
+// const sales = await SalesInvoice.find({ createdAt: { $gte: today, $lt: tomorrow }, userId: req.user._id });
+// res.json({ success: true, totalRecords: sales.length, sales });
+// } catch(err){
+// console.error(err);
+// res.status(500).json({ success: false, message: 'Server error' });
+// }
+// }
+
+
+
+
+
+
+
+
+
 
 
 // export const updateInvoice = async (req, res) => {

@@ -3,18 +3,19 @@ import mongoose from "mongoose";
 const itemSchema = new mongoose.Schema({
   hsCode: { type: String, required: true },
   productDescription: { type: String, required: true },
-  uom: { type: String, required: true },
-  taxType: {
-    descriptionType: { type: String, required: true },
-    salesTaxValue: { type: Number, required: true },
-  },
+  uoM: { type: String, required: true },
+  // taxType: {
+  //   descriptionType: { type: String, required: true },
+  //   salesTaxValue: { type: Number, required: true },
+  // },
   quantity: { type: Number, required: true },
-  price: { type: Number, required: true },
+  
+  // price: { type: Number, required: true },
 
   furtherTax: { type: Number, default: 0 },
 
-  productValueBeforeTax: { type: Number, required: true },
-  productValueAfterTax: { type: Number, required: true },
+  valueSalesExcludingST: { type: Number, required: true },
+  saleTaxwithheldAtSource: { type: Number, required: true },
 
   
   rate: { type: String },
@@ -24,7 +25,7 @@ const itemSchema = new mongoose.Schema({
   sroItemSerialNo: { type: String, default: "" },
   sroScheduleNo: { type: String, default: "" },
   salesTaxApplicable: { type: Number, default: 0 },
-  valueSalesExcludingST: { type: Number, default: 0 },
+  // valueSalesExcludingST: { type: Number, default: 0 },
   totalValues: { type: Number, default: 0 },
   fixedNotifiedValueOrRetailPrice: { type: Number, default: 0 },
   extraTax: { type: String, default: "" },
