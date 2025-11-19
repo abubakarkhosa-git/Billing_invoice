@@ -1,21 +1,22 @@
+import { required } from "joi";
 import mongoose from "mongoose";
 
 const itemSchema = new mongoose.Schema({
-  hsCode: { type: String, required: true },
-  productDescription: { type: String, required: true },
-  uoM: { type: String, required: true },
+  hsCode: { type: String},
+  productDescription: { type: String},
+  uoM: { type: String },
   // taxType: {
   //   descriptionType: { type: String, required: true },
   //   salesTaxValue: { type: Number, required: true },
   // },
-  quantity: { type: Number, required: true },
+  quantity: { type: Number },
   
   // price: { type: Number, required: true },
 
   furtherTax: { type: Number, default: 0 },
 
-  valueSalesExcludingST: { type: Number, required: true },
-  saleTaxwithheldAtSource: { type: Number, required: true },
+  valueSalesExcludingST: { type: Number},
+  salesTaxWithheldAtSource: { type: Number },
 
   
   rate: { type: String },
@@ -52,11 +53,12 @@ const salesInvoiceSchema = new mongoose.Schema(
   
     scenarioId: { type: String, default: "" },
     invoiceRefNo: { type: String, default: "" },
+    FBRToken:{type: String, required: true},
 
     items: [itemSchema],
 
   
-    grandTotal: { type: Number, required: true },
+    grandTotal: { type: Number },
 
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   },

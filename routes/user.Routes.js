@@ -13,7 +13,7 @@ router.post("/forgot-password", forgotpassword)
 router.post("/reset-password/:token", resetpassword)
 router.post("/change-password", isAuthorized,changepassword)
 router.post("/logout", isAuthorized, logout);
-router.post("/refresh", refreshTokenController)
+router.get("/refresh", refreshTokenController)
 
 
 //Product

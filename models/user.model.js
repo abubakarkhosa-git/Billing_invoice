@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema(
     FBRToken: {
       type: String,
       required: true,
-      default: null,
+      // default: null,
     },
 
     BusinessName: {

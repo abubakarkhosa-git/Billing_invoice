@@ -57,7 +57,7 @@ export const getSellerDetails = async (req, res) => {
     const userId = req.user.id;
 
     const user = await User.findById(userId).select(
-      "NTNCNIC BusinessName Address Province"
+      "NTNCNIC BusinessName Address Province FBRToken"
     );
 
     if (!user) {
