@@ -4,6 +4,7 @@ import { isAuthorized } from '../middleware/auth.middleware.js';
 import { addProduct, deleteProduct, getAllProducts, getProduct, updateProduct } from '../controllers/product.controller.js';
 import { createInvoice ,getAllInvoices,getInvoiceById, getSellerDetails, getTodaySales,  } from '../controllers/saleinvoice.controller.js';
 import { addCustomer, deleteCustomer, getAllCustomers, getCustomerById, updateCustomer } from '../controllers/customer.controllers.js';
+import { getDashboardStats } from '../controllers/dashboard.controller.js';
 
 const router=express.Router();
 
@@ -42,4 +43,9 @@ router.get("/today-sales", isAuthorized, getTodaySales);
 
 // router.put("/saleinvoice/:id", isAuthorized,updateInvoice);
 // router.delete("/saleinvoice/:id",isAuthorized, deleteInvoice);
+
+
+//dashboard
+router.get("/dashboard-stats", isAuthorized, getDashboardStats);
+
 export default router;

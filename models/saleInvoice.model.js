@@ -1,5 +1,6 @@
-import { required } from "joi";
+
 import mongoose from "mongoose";
+import Joi from "joi";
 
 const itemSchema = new mongoose.Schema({
   hsCode: { type: String},
