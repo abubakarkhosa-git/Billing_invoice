@@ -46,6 +46,6 @@ router.get("/today-sales", isAuthorized, getTodaySales);
 
 
 //dashboard
-router.get("/dashboard-stats", isAuthorized, getDashboardStats);
+router.get("/dashboard", isAuthorized, getDashboardStats);
 
 export default router;
