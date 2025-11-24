@@ -3,7 +3,7 @@ import customerModel from "../models/customer.Model.js";
 // ✅ CREATE Customer
 export const addCustomer = async (req, res) => {
   try {
-    const { name, ntnCnic, address, contact, product, province, customertype } =
+    const { name, ntnCnic, address, contact, province, customertype } =
       req.body;
 
     if (

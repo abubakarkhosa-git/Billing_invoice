@@ -1,6 +1,6 @@
 
 import mongoose from "mongoose";
-import saleInvoice from "../models/saleInvoice.model";
+import saleInvoice from "../models/saleInvoice.model.js";
 
 export const getDashboardStats = async (req, res) => {
   try {
