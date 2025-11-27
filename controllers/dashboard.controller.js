@@ -1,68 +1,74 @@
-
-import mongoose from "mongoose";
-import saleInvoice from "../models/saleInvoice.model.js";
+import SalesInvoice from "../models/salesInvoice.model.js";
 
 export const getDashboardStats = async (req, res) => {
   try {
-    const today = new Date().toISOString().slice(0, 10); 
-    const now = new Date();
-
-    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-      .toISOString()
-      .slice(0, 10);
-
-    
-    const todayInvoices = await saleInvoice.find({
-      invoiceDate: today,
-    });
-
-    const todaySales = todayInvoices.reduce(
-      (sum, inv) => sum + (inv.grandTotal || 0),
-      0
-    );
-
-   
-    const todayInvoiceCount = todayInvoices.length;
-
-   
-    const monthInvoices = await saleInvoice.find({
-      invoiceDate: { $gte: firstDayOfMonth, $lte: today },
-    });
-
-    const monthSales = monthInvoices.reduce(
-      (sum, inv) => sum + (inv.grandTotal || 0),
-      0
-    );
-
-   
-    const monthInvoiceCount = monthInvoices.length;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
   
-    const todayBreakdown = todayInvoices.map((inv) => ({
-      date: inv.invoiceDate,
-      invoiceNo: inv._id,
-      amount: inv.grandTotal,
-      customer: inv.buyerBusinessName,
-      tax: inv.items.reduce((s, i) => s + (i.salesTaxApplicable || 0), 0),
-      createdBy: inv.userId,
-    }));
+    const totalInvoices = await SalesInvoice.countDocuments();
+
+  
+    const totalSales = await SalesInvoice.aggregate([
+      { $group: { _id: null, total: { $sum: "$grandTotal" } } }
+    ]);
+
+   
+    const todayInvoices = await SalesInvoice.countDocuments({
+      createdAt: { $gte: today }
+    });
+
+    const todaySales = await SalesInvoice.aggregate([
+      { $match: { createdAt: { $gte: today } } },
+      { $group: { _id: null, total: { $sum: "$grandTotal" } } }
+    ]);
+
+   
+    const last7Days = await SalesInvoice.aggregate([
+      {
+        $group: {
+          _id: {
+            day: { $dayOfMonth: "$createdAt" },
+            month: { $month: "$createdAt" },
+            year: { $year: "$createdAt" }
+          },
+          totalSales: { $sum: "$grandTotal" },
+          invoiceCount: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id.year": -1, "_id.month": -1, "_id.day": -1 } },
+      { $limit: 7 }
+    ]);
+
+    
+    const latestInvoices = await SalesInvoice.find()
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .lean(); 
 
     return res.status(200).json({
       success: true,
-      data: {
-        todaySales,
-        todayInvoiceCount,
-        monthSales,
-        monthInvoiceCount,
-        todayBreakdown,
+      summary: {
+        totalInvoices,
+        totalSales: totalSales[0]?.total || 0,
+
+        todayInvoices,
+        todaySales: todaySales[0]?.total || 0,
       },
+
+      chart: {
+        last7Days,
+      },
+
+      invoices: latestInvoices, 
     });
-  } catch (err) {
-    console.error("Dashboard Error: ", err);
-    return res.status(500).json({
+
+  } catch (error) {
+    console.error("Dashboard Error:", error);
+    res.status(500).json({
       success: false,
-      message: "Something went wrong",
-      error: err.message,
+      message: "Failed to load dashboard",
+      error: error.message
     });
   }
 };
