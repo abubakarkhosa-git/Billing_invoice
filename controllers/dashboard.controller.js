@@ -1,4 +1,4 @@
-import SalesInvoice from "../models/salesInvoice.model.js";
+import SalesInvoice from "../models/saleInvoice.model.js";
 
 export const getDashboardStats = async (req, res) => {
   try {
