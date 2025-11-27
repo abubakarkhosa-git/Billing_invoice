@@ -5,6 +5,7 @@ import { addProduct, deleteProduct, getAllProducts, getProduct, updateProduct } 
 import { createInvoice ,getAllInvoices,getInvoiceById, getSellerDetails, getTodaySales,  } from '../controllers/saleinvoice.controller.js';
 import { addCustomer, deleteCustomer, getAllCustomers, getCustomerById, updateCustomer } from '../controllers/customer.controllers.js';
 import { getDashboardStats } from '../controllers/dashboard.controller.js';
+import { createCreditNote, getAllCreditNotes } from '../controllers/creditNote.controller.js';
 
 const router=express.Router();
 
@@ -44,6 +45,10 @@ router.get("/today-sales", isAuthorized, getTodaySales);
 // router.put("/saleinvoice/:id", isAuthorized,updateInvoice);
 // router.delete("/saleinvoice/:id",isAuthorized, deleteInvoice);
 
+
+//credit Note
+router.post("/credit-note", isAuthorized, createCreditNote)
+router.get("/credit-note", isAuthorized, getAllCreditNotes)
 
 //dashboard
 router.get("/dashboard", isAuthorized, getDashboardStats);
