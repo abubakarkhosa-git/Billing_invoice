@@ -59,6 +59,7 @@ const customerSchema = new mongoose.Schema(
       required: [true, "Customer type is required"],
       // enum: ["Registered", "Un-Registered"],
     },
+     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );

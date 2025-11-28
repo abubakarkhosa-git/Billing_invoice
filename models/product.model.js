@@ -84,6 +84,7 @@ const productSchema = new mongoose.Schema(
       min: [1, "Quantity must be greater than 0"],
       default: 0,
     },
+     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   },
   { timestamps: true }
 );
