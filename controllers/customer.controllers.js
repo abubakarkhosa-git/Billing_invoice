@@ -1,35 +1,78 @@
 import customerModel from "../models/customer.Model.js";
 
 // ✅ CREATE Customer
+// export const addCustomer = async (req, res) => {
+//   try {
+//     const { name, ntnCnic, address, contact, province, customertype } =
+//       req.body;
+
+//     if (
+//       !name ||
+//       !ntnCnic ||
+//       !address ||
+//       !contact ||
+//       // !product ||
+//       !province ||
+//       !customertype
+//     ) {
+//       return res.status(400).json({ message: "All fields are required" });
+//     }
+
+//     const customer = await customerModel.create(req.body);
+
+//     res.status(201).json({
+//       success: true,
+//       message: "Customer registered successfully",
+//       data: customer,
+//     });
+//   } catch (error) {
+//     console.error("Error adding customer:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Server error",
+//       error: error.message,
+//     });
+//   }
+// };
+
 export const addCustomer = async (req, res) => {
   try {
-    const { name, ntnCnic, address, contact, province, customertype } =
-      req.body;
+    const { name, ntnCnic, address, contact, province, customertype } = req.body;
 
-    if (
-      !name ||
-      !ntnCnic ||
-      !address ||
-      !contact ||
-      // !product ||
-      !province ||
-      !customertype
-    ) {
-      return res.status(400).json({ message: "All fields are required" });
+    if (!name || !ntnCnic || !address || !contact || !province || !customertype) {
+      return res.status(400).json({
+        status: false,
+        message: "All fields are required",
+      });
     }
 
-    const customer = await customerModel.create(req.body);
+    const existing = await Customer.findOne({ ntnCnic });
+    if (existing) {
+      return res.status(400).json({
+        status: false,
+        message: "Customer with this NTN/CNIC already exists",
+      });
+    }
+
+    const customer = await Customer.create({
+      name,
+      ntnCnic,
+      address,
+      contact,
+      province,
+      customertype,
+      userId: req.user?._id
+    });
 
     res.status(201).json({
-      success: true,
-      message: "Customer registered successfully",
-      data: customer,
+      status: true,
+      message: "Customer created successfully",
+      customer,
     });
   } catch (error) {
-    console.error("Error adding customer:", error);
     res.status(500).json({
-      success: false,
-      message: "Server error",
+      status: false,
+      message: "Internal server error",
       error: error.message,
     });
   }
