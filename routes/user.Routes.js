@@ -4,7 +4,7 @@ import { isAuthorized } from '../middleware/auth.middleware.js';
 import { addProduct, deleteProduct, getAllProducts, getProduct, updateProduct } from '../controllers/product.controller.js';
 import { createInvoice ,getAllInvoices,getInvoiceById, getSellerDetails, getTodaySales,  } from '../controllers/saleinvoice.controller.js';
 import { addCustomer, deleteCustomer, getAllCustomers, getCustomerById, updateCustomer } from '../controllers/customer.controllers.js';
-import { getDashboardStats } from '../controllers/dashboard.controller.js';
+import { getDashboardStats, getInvoice } from '../controllers/dashboard.controller.js';
 import { createCreditNote, getAllCreditNotes } from '../controllers/creditNote.controller.js';
 
 const router=express.Router();
@@ -52,5 +52,6 @@ router.get("/credit-note", isAuthorized, getAllCreditNotes)
 
 //dashboard
 router.get("/dashboard", isAuthorized, getDashboardStats);
+router.get("/today-sale", isAuthorized, getInvoice)
 
 export default router;
